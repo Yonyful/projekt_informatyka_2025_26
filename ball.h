@@ -43,6 +43,10 @@ public:
         return x;
     }
     double getY(void) { //Getter po³o¿enia na osi y
+        return y;
+    }
+    double getR(void) {
+        return r;
     }
 
 

@@ -1,14 +1,34 @@
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
 #include "ball.h"
 #include "paletka.h"
-#include <SFML/Graphics.hpp>
 
-using namespace std;
+int main()
+{
+	
+	ball b1(5, 5, 5, 5, 5, 5, 5);
+	double r = b1.getR();
 
-int main() {
-    //ball b1(10, 0, 3, 5, 5, 50, 50);
-    //b1.move_ball(100);
-    paletka p1(10, 20, 4, 5, 500, 300);
-    p1.move_left(30);
+
+
+	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+	sf::CircleShape shape(static_cast<float>(r));
+	shape.setFillColor(sf::Color::Green);
+
+
+	while (window.isOpen())
+	{
+		window.setFramerateLimit(60);
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
+		window.clear();
+		window.draw(shape);
+		window.display();
+	}
+	return 0;
 }
