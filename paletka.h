@@ -48,6 +48,13 @@ public:
 		}
 		vx = vx_previous;
 	}
+	double getX(void) { //Getter po³o¿enia na osi x
+		return x;
+	}
+	double getY(void) { //Getter po³o¿enia na osi y
+		return y;
+	}
+
 };
 paletka::paletka(double x_in, double y_in, double  vx_in, double pal_width_in, double width_in, double height_in) { //Konstruktor
 	x = x_in;

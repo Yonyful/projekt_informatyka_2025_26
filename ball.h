@@ -38,9 +38,13 @@ public:
             y = y + vy;
 
         }
-
-
     }
+    double getX(void) { //Getter po³o¿enia na osi x
+        return x;
+    }
+    double getY(void) { //Getter po³o¿enia na osi y
+    }
+
 
 }; //Konstruktor
 ball::ball(double r_in, double x_in, double y_in, double vx_in, double vy_in, double height_in, double width_in) {
