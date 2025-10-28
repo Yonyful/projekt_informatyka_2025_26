@@ -30,7 +30,6 @@ public:
     }
     void move_ball(int steps) { //Symulacja ruchu
         for (int i = 1; i <= steps; i++) {
-            cout << "Krok " << i;
             print();
             bounce();
             cout << endl;
@@ -39,14 +38,20 @@ public:
 
         }
     }
-    double getX(void) { //Getter po³o¿enia na osi x
+    double getX(void) { //Gettery
         return x;
     }
-    double getY(void) { //Getter po³o¿enia na osi y
+    double getY(void) { 
         return y;
     }
     double getR(void) {
         return r;
+    }
+    double getVx(void) {
+        return vx;
+    }
+    double getVy(void) {
+        return vy;
     }
 
 
