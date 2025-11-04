@@ -5,64 +5,71 @@ using namespace std;
 
 class paletka {
 private:
-	double x, y, vx, pal_width, width, height;
+	float x, y, vx, pal_width, pal_height;
+	sf::RectangleShape shape;
 public:
-	paletka(double x_in, double y_in, double  vx_in, double pal_width_in, double width_in, double height_in);
+	paletka(float x_in, float y_in, float  vx_in, float pal_width_in, float pal_height_in, float width_in, float height_in);
 
 	void print(void) { // Debug po³o¿enia paletki
 		cout << " x: " << x
 			<< " y: " << y
-			<< " vx: " << vx;
+			<< " vx: " << vx
+			<< endl;
+			
 	}
-	void wall_collision(void) { //Kolizja ze œcian¹
-		if (x - pal_width <= 0 || x + pal_width >= width) {
-			vx = 0;
-			cout << " HIT WALL ";
+
+	void clampToRound(float width) { //Blokada wyjscia za scianê
+		if (x - pal_width / 2 >= 0) {
+			shape.setPosition({ 0, y });
+		}
+		if (x + pal_width / 2 <= width) {
+			shape.setPosition({ width, y });
 		}
 	}
-	void move_left(int steps) { //Ruch w lewo
-		double vx_previous = vx;
-		for (int i = 1; i <= steps + 1; i++) {
-			cout << "Step_left " << i;
-			print();
-			wall_collision();
-			if (vx == 0) {
-				break;
-			}
-			cout << endl;
-			x = x - vx;
-		}
-		vx = vx_previous;
+
+	void move_left(void) { //Ruch w lewo
+		x = x - vx;
+		print();
+		shape.setPosition({ x, y });
 	}
-	void move_right(int steps) { //Ruch w prawo
-		double vx_previous = vx;
-		for (int i = 1; i <= steps; i++) {
-			cout << "Step_right " << i;
-			print();
-			wall_collision();
-			if (vx == 0) {
-				break;
-			}
-			cout << endl;
-			x = x + vx;
-		}
-		vx = vx_previous;
+
+	void move_right(void) { //Ruch w prawo
+		x = x + vx;
+		print();
+		shape.setPosition({ x, y });
 	}
-	double getX(void) { //Getter po³o¿enia na osi x
+
+	void draw(sf::RenderTarget& target) { //Rysowanie
+		target.draw(shape);
+	}
+
+
+	float getX(void) { //Gettery
 		return x;
 	}
-	double getY(void) { //Getter po³o¿enia na osi y
+	float getY(void) { 
 		return y;
+	}
+	float getpal_width(void){
+		return pal_width;
+	}
+	float getpal_height(void) {
+		return pal_height;
 	}
 
 };
-paletka::paletka(double x_in, double y_in, double  vx_in, double pal_width_in, double width_in, double height_in) { //Konstruktor
+paletka::paletka(float x_in, float y_in, float  vx_in, float pal_width_in, float pal_height_in, float width_in, float height_in) { //Konstruktor
 	x = x_in;
 	y = y_in;
 	vx = vx_in;
 	pal_width = pal_width_in;
-	width = width_in;
-	height = height_in;
+	pal_height = pal_height_in;
+
+	
+	shape.setSize({ pal_width_in, pal_height_in }); //Parametry paletki w SFML
+	shape.setOrigin({ width_in / 2, height_in / 2 });
+	shape.setPosition({ x_in, y_in });
+	shape.setFillColor(sf::Color(13, 25, 33, 45));
 }
 
 
