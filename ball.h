@@ -87,6 +87,10 @@ public:
     float getVy(void) {
         return vy;
     }
+    sf::CircleShape& getShape() {
+        return shape;
+    }
+    
 
 
 
