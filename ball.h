@@ -47,10 +47,10 @@ public:
 
 
     bool collidePaddle(paletka& p) { //Kolizja paletka pilka 
-        if (x>=p.getX() - (p.getpal_width()/2) && x<= p.getX() + (p.getpal_width()/2) &&  ((y+r) >= ( p.getY() - (p.getpal_height()/2) && (y-r) < ( p.getY() - (p.getpal_height()/2) ))) ) {
-            vy = -abs(vy);
-            y = p.getY() - (p.getpal_height() / 2);
-            shape.setPosition({ x,y });
+        if (x + r >= p.getX() - (p.getpal_width() / 2) &&  x - r <= p.getX() + (p.getpal_width() / 2) && y + r >= p.getY() - (p.getpal_height() / 2) &&  y - r < p.getY() - (p.getpal_height() / 2)){
+            vy = -abs(vy);                                 
+            y = p.getY() - (p.getpal_height() / 2) - r;     
+            shape.setPosition({ x, y });
             return true;
         }
         else {

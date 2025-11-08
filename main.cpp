@@ -35,6 +35,7 @@ int main() {
 				pal.move_right();
 			}
 			pal.clampToRound(width);
+			
 
 			//ball.wallCollision(width, height);
 			//if (ball.collidePaddle(pal)) {
