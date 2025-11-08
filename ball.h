@@ -1,5 +1,7 @@
+#pragma once
 #include <string>
 #include <iostream>
+#include "paletka.h"
 
 using namespace std;
 
@@ -8,7 +10,7 @@ private:
     float r, x, y, vx, vy;
     sf::CircleShape shape;
 public:
-    ball(float r_in, float x_in, float y_in, float vx_in, float vy_in, float width_in, float height_in); //Konstruktor
+    ball(float r_in, float x_in, float y_in, float vx_in, float vy_in); //Konstruktor
 
     void print(void) { // Debug po³o¿enia pi³ki
         cout << " x: " << x
@@ -28,19 +30,26 @@ public:
 
 
     void wallCollision(float width, float height) { //Kolizja ze scianami 
-        if (x - r  >= 0 || x + r >= width) {
+        if (x - r  <= 0) { //Kolizja pozioma
             bounceX();
         }
-        if (y - r >= 0 || y + r >= height) {
+        else if (x + r >= width) {
+            bounceX();
+        }
+
+        if (y - r <= 0) { //Kolizja pionowa oraz ustawienie pozycji zeby pilka nie byla w scianie
+            bounceY();
+        }
+        else if (y + r >= height) {
             bounceY();
         }
     }
 
 
     bool collidePaddle(paletka& p) { //Kolizja paletka pilka 
-        if (x >= p.getX() - p.getpal_width() / 2 && x <= p.getX() - p.getpal_width() / 2 || (y+r) >= (p.getY() - p.getpal_height()/2) && (y + r) < (p.getY() - p.getpal_height()/ 2)){
-            vy = -std::abs(vy); 
-            y = (p.getY() - p.getpal_height() / 2) - r; 
+        if (x>=p.getX() - (p.getpal_width()/2) && x<= p.getX() + (p.getpal_width()/2) &&  ((y+r) >= ( p.getY() - (p.getpal_height()/2) && (y-r) < ( p.getY() - (p.getpal_height()/2) ))) ) {
+            vy = -abs(vy);
+            y = p.getY() - (p.getpal_height() / 2);
             shape.setPosition({ x,y });
             return true;
         }
@@ -50,10 +59,15 @@ public:
 
     }
 
+
     void move_ball(void) { //Ruch pilki
             x = x + vx;
             y = y + vy;
             shape.setPosition({ x,y });
+    }
+
+    void draw(sf::RenderTarget& target) { //Rysowanie
+        target.draw(shape);
     }
 
 
@@ -67,11 +81,17 @@ public:
     float getR(void) {
         return r;
     }
+    float getVx(void) {
+        return vx;
+    }
+    float getVy(void) {
+        return vy;
+    }
 
 
 
 }; //Konstruktor
-ball::ball(float r_in, float x_in, float y_in, float vx_in, float vy_in, float height_in, float width_in) {
+ball::ball(float r_in, float x_in, float y_in, float vx_in, float vy_in) {
     r = r_in;
     x = x_in;
     y = y_in;
