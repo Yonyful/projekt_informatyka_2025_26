@@ -31,13 +31,13 @@ public:
 		}
 	}
 
-	void move_left(void) { //Ruch w lewo
-		x = x - vx;
+	void move_left(float distance) { //Ruch w lewo
+		x = x - distance;
 		shape.setPosition({ x, y });
 	}
 
-	void move_right(void) { //Ruch w prawo
-		x = x + vx;
+	void move_right(float distance) { //Ruch w prawo
+		x = x + distance;
 		shape.setPosition({ x, y });
 	}
 
@@ -57,6 +57,9 @@ public:
 	}
 	float getpal_height(void) {
 		return pal_height;
+	}
+	float getVx(void) {
+		return vx;
 	}
 	sf::RectangleShape& getShape(){ 
 		return shape; 

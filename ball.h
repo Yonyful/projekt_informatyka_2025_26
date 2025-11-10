@@ -60,10 +60,10 @@ public:
     }
 
 
-    void move_ball(void) { //Ruch pilki
-            x = x + vx;
-            y = y + vy;
-            shape.setPosition({ x,y });
+    void move_ball(float distanceX, float distanceY) { //Ruch pilki
+            x = x + distanceX;
+            y = y + distanceY;
+            shape.setPosition({ x , y });
     }
 
     void draw(sf::RenderTarget& target) { //Rysowanie
