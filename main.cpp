@@ -2,8 +2,13 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
+#include <vector>
 #include "ball.h"
 #include "paletka.h"
+#include "brick.h"
+
+
+
 
 class Game {
 private:
@@ -11,6 +16,7 @@ private:
 	paletka pal;
 	ball ball;
 	bool movingLeft, movingRight;
+	std::vector<Brick> bricks;
 	
 
 
@@ -38,25 +44,58 @@ private:
 		}
 
 	}
+	
+	void generateBricks() { //Generacja wektora z cegielkami 
+		const int columns = 6;
+		const int rows = 7;
+		const float brick_size_y = 25.f;
+		const float brick_size_x = (640.f - (columns - 1) * 2.f) / columns;
+		float posY = brick_size_y / 2 + 50.f;
+
+		for (int i = 0; i < rows; i++ ) { //Ustawianie pozycji poszczegolnych cegielek
+			float posX = brick_size_x / 2;
+
+			for (int j = 0; j < columns; j++) {
+
+				int L = (i < 1) ? 3 : (i < 3) ? 2 : 1;
+				bricks.emplace_back(sf::Vector2f{posX , posY}, sf::Vector2f{brick_size_x, brick_size_y }, L);
+				posX = posX + brick_size_x + 2.f;
+			}
+			posY = posY + brick_size_y + 2.f;
+
+		}
+
+
+
+	}
 
 	void update(float deltaTime) { //Funkcjonalnoœæ gry
 		
-		if (movingLeft == true) {
+		if (movingLeft == true) { //Ruch paletki w lewo i prawo
 			pal.move_left(deltaTime * 50 * pal.getVx() );
 		}
 		if (movingRight == true) {
 			pal.move_right(deltaTime * 50 * pal.getVx());
 		}
-		pal.clampToRound(640);
+		pal.clampToRound(640); //Blokada wychodzenia paletki poza ekran 
 
 		ball.move_ball(deltaTime * 50 * ball.getVx(), deltaTime * 50 * ball.getVy()); //Ruch pi³ki
 
-		ball.wallCollision(640, 480);
+		ball.wallCollision(640, 480); //Kolizja paletki ze sciana
 		if (ball.collidePaddle(pal)) {
 			std::cout << "HIT PADDLE\n";
 		}
+		for (auto& brick : bricks) {
+			if (ball.collideBrick(brick) == true) {
+				brick.hit();
+				break;
+			}
+		}
 
-		if ((ball.getY() + ball.getR()) >= 480 ) {
+
+
+
+		if ((ball.getY() + ball.getR()) >= 480 ) { //Przegrana
 
 			//window.close();
 		}
@@ -64,12 +103,16 @@ private:
 	void render() { //Renderowanie obiektów
 		window.setFramerateLimit(60);
 		window.clear(sf::Color(20,20,30));
-		window.draw(pal.getShape());
-		window.draw(ball.getShape());
+		pal.draw(window);
+		ball.draw(window);
+		for (auto& brick : bricks) {
+			brick.draw(window);
+		}
 		window.display();
 	}
 
-	sf::Clock clock;
+
+	sf::Clock clock; //Implementacja fixed-time steps
 	sf::Time timeSinceUpdate = sf::Time::Zero;
 	const sf::Time timePerFrame = sf::seconds(1.f / 60.f);
 	
@@ -78,16 +121,15 @@ private:
 public: //Uruchomienie gry
 	Game();
 	void run() { 
+		generateBricks(); //Wywolanie funkcji generujacej cegielki 
 		while (window.isOpen()) {
-			processEvents();
+			processEvents(); //Przetwarzanie eventow jak nacisniecia przyciskow, oraz odswiezanie ekranu gry odbywa sie zawsze w rownych odstepach czasu
 			timeSinceUpdate = timeSinceUpdate + clock.restart();
-
 			while (timeSinceUpdate > timePerFrame) {
 				timeSinceUpdate = timeSinceUpdate - timePerFrame;
 				processEvents();
 				update(timePerFrame.asSeconds());
 			}
-
 			render();
 
 		}
@@ -95,14 +137,11 @@ public: //Uruchomienie gry
 };
 Game::Game():window(sf::VideoMode({ 640, 480 }), //Konstruktor gry
 	"test"), pal(320.f, 440.f, 5.f, 100.f, 20.f),
-	ball(8.f, 320.f, 200.f, 4.f, 3.f),
+	ball(8.f, 320.f, 400.f, 4.f, -3.f),
 	movingLeft(false),
 	movingRight(false)
 {
-
 }
-
-
 
 
 int main() {

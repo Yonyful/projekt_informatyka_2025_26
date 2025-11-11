@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "paletka.h"
+#include "brick.h"
 
 using namespace std;
 
@@ -47,7 +48,11 @@ public:
 
 
     bool collidePaddle(paletka& p) { //Kolizja paletka pilka 
-        if (x + r >= p.getX() - (p.getpal_width() / 2) &&  x - r <= p.getX() + (p.getpal_width() / 2) && y + r >= p.getY() - (p.getpal_height() / 2) &&  y - r < p.getY() - (p.getpal_height() / 2)){
+        float left = p.getX() - (p.getpal_width() / 2.f);
+        float right = p.getX() + (p.getpal_width() / 2.f);
+        float top = p.getY() - (p.getpal_height() / 2.f);
+
+        if (x + r >= left &&  x - r <= right && y + r >= top &&  y - r < p.getY() - (p.getpal_height() / 2)){
             vy = -abs(vy);                                 
             y = p.getY() - (p.getpal_height() / 2) - r;     
             shape.setPosition({ x, y });
@@ -59,7 +64,34 @@ public:
 
     }
 
+    bool collideBrick(Brick& b) { //
 
+        float width = b.getSize().x; //Wymiary klocka
+        float height = b.getSize().y;
+        float left = b.getPosition().x - width / 2.f;
+        float right = b.getPosition().x + width / 2.f;
+        float top = b.getPosition().y - height / 2.f;
+        float bottom = b.getPosition().y + height / 2.f;
+
+        if (b.getisDestroyed() == false) {
+            if (x + r >= left && x - r <= right && y + r >= top && y - r <= bottom) {
+                if (y < b.getPosition().y) {
+                    vy = -abs(vy);
+                    y = top - r;
+                }
+                else {
+                    vy = abs(vy);
+                    y = bottom + r;
+                }
+
+
+                shape.setPosition({ x, y });
+                return true;
+            }
+        }
+
+      
+    }
     void move_ball(float distanceX, float distanceY) { //Ruch pilki
             x = x + distanceX;
             y = y + distanceY;
@@ -69,7 +101,6 @@ public:
     void draw(sf::RenderTarget& target) { //Rysowanie
         target.draw(shape);
     }
-
 
 
     float getX(void) { //Gettery
@@ -87,10 +118,7 @@ public:
     float getVy(void) {
         return vy;
     }
-    sf::CircleShape& getShape() {
-        return shape;
-    }
-    
+
 
 
 

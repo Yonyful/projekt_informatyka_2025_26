@@ -61,9 +61,7 @@ public:
 	float getVx(void) {
 		return vx;
 	}
-	sf::RectangleShape& getShape(){ 
-		return shape; 
-	}
+
 
 };
 paletka::paletka(float x_in, float y_in, float  vx_in, float pal_width_in, float pal_height_in) { //Konstruktor
