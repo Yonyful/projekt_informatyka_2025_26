@@ -61,6 +61,14 @@ public:
 	float getVx(void) {
 		return vx;
 	}
+	void setPosition(sf::Vector2f p) { //Settery 
+		x = p.x;       
+		y = p.y;
+		shape.setPosition(p); 
+	}
+	void setVelocity(float v) {
+		vx = v; 
+	}
 
 
 };
