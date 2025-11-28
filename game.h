@@ -13,7 +13,7 @@ private:
 	ball ball;
 	bool movingLeft, movingRight;
 	std::vector<Brick> bricks;
-	bool is_game_exiting = false;
+
 
 
 
@@ -21,15 +21,16 @@ private:
 public: //Uruchomienie gry
 	Game();
 	void update(float deltaTime) { //Funkcjonalnoœæ gry
+
 		if (movingLeft == true) { //Ruch paletki w lewo i prawo
-			pal.move_left(deltaTime * 1 * pal.getVx());
+			pal.move_left(deltaTime * 50 * pal.getVx());
 		}
 		if (movingRight == true) {
-			pal.move_right(deltaTime * 1 * pal.getVx());
+			pal.move_right(deltaTime * 50 * pal.getVx());
 		}
 		pal.clampToRound(640); //Blokada wychodzenia paletki poza ekran 
 
-		ball.move_ball(deltaTime * 1 * ball.getVx(), deltaTime * 1 * ball.getVy()); //Ruch pi³ki
+		ball.move_ball(deltaTime * 50 * ball.getVx(), deltaTime * 50 * ball.getVy()); //Ruch pi³ki
 
 		ball.wallCollision(640, 480); //Kolizja paletki ze sciana
 		ball.collidePaddle(pal);
@@ -40,8 +41,8 @@ public: //Uruchomienie gry
 			}
 		}
 		if ((ball.getY() + ball.getR()) >= 480) { //Przegrana
-			is_game_exiting = true;
-			std::cout << "Przegrana"; 
+
+			//window.close();
 		}
 	}
 	void render(sf::RenderTarget& target) { //Renderowanie obiektów
@@ -58,9 +59,6 @@ public: //Uruchomienie gry
 		}
 		if (key == sf::Keyboard::Key::D) {
 			movingRight = isPressed;
-		}
-		if (key == sf::Keyboard::Key::Escape) {
-			is_game_exiting = true;
 		}
 
 	}
@@ -84,27 +82,16 @@ public: //Uruchomienie gry
 
 		}
 	}
-	bool return_is_game_exiting(void) {
-		return is_game_exiting;
-	}
-	void reset() {
-		pal.setPosition({ 320.f, 440.f });
-		pal.setVelocity(300.f);  
-		ball.setPosition({ 320.f, 400.f });
-		ball.setVelocity({ 200.f, -150.f }); 
-		movingLeft = false;
-		movingRight = false;
-		is_game_exiting = false;
-		bricks.clear();
-		generateBricks();
-	}
+
+
+
 
 
 
 
 };
-Game::Game() : pal(320.f, 440.f, 300.f, 100.f, 20.f),
-	ball(8.f, 320.f, 400.f, 200.f, -150.f),
+Game::Game() : pal(320.f, 440.f, 5.f, 100.f, 20.f),
+	ball(8.f, 320.f, 400.f, 4.f, -3.f),
 	movingLeft(false),
 	movingRight(false)
 {

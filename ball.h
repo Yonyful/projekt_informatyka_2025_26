@@ -87,7 +87,6 @@ public:
                 std::cout << "HIT BRICK \n";
                 return true;
             }
-            return false;
         }
 
       
@@ -118,15 +117,6 @@ public:
     float getVy(void) {
         return vy;
     }
-    void setPosition(sf::Vector2f p) { //Settery
-        x = p.x;
-        y = p.y;
-        shape.setPosition(p); 
-    }
-    void setVelocity(sf::Vector2f v) {
-        vx = v.x; vy = v.y;
-    }
-
 
 
 
