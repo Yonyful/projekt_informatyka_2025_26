@@ -83,8 +83,9 @@ public:
                     vy = abs(vy);
                     y = bottom + r;
                 }
+
+
                 shape.setPosition({ x, y });
-                std::cout << "HIT BRICK \n";
                 return true;
             }
         }
