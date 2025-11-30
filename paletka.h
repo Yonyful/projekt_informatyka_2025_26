@@ -62,6 +62,11 @@ public:
 		return vx;
 	}
 
+	void setPosition(float xreset, float yreset) { //Setter polozenia
+		x = xreset;
+		y = yreset;
+	}
+
 
 };
 paletka::paletka(float x_in, float y_in, float  vx_in, float pal_width_in, float pal_height_in) { //Konstruktor

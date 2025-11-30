@@ -50,6 +50,9 @@ public:
 	sf::Vector2f getPosition() {
 		return sf::RectangleShape::getPosition();
 	}
+	int getHP() {
+		return health_points;
+	}
 
 
 };

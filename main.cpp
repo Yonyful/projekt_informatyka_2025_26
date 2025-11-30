@@ -1,152 +1,101 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>s
 #include <string>
 #include <iostream>
 #include <vector>
-#include "ball.h"
-#include "paletka.h"
-#include "brick.h"
+#include "game.h"
+#include "menu.h"
+#include "gamestate.h"
 
 
+int main() {
+	sf::RenderWindow window(sf::VideoMode({ 640, 480 }), "Arkanoid");
+	enum class GameState {Menu, Playing, Scores};
+	GameState currentState = GameState::Menu;
+	int menu_selected_flag = 0;
+	Game game(window);
+	Menu menu(window.getSize().x, window.getSize().y);
 
-
-class Game {
-private:
-	sf::RenderWindow window;
-	paletka pal;
-	ball ball;
-	bool movingLeft, movingRight;
-	std::vector<Brick> bricks;
-	
-
-
-	void processEvents() { //Obs³uga eventów
+	while (window.isOpen()) {
+		switch (currentState) {
+		case GameState::Menu:
+			menu_selected_flag = 0;
 			while (const std::optional event = window.pollEvent()) {
 				if (event->is<sf::Event::Closed>()) {
 					window.close();
 				}
-				else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()){
-				
-					handleInput(keyPressed->code, true);
+
+				if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+					if (keyPressed->scancode == sf::Keyboard::Scancode::Up) { //Przesuniecie gora
+						myDelay(100);
+						menu.przesunG();
+					}
+					if (keyPressed->scancode == sf::Keyboard::Scancode::Down) { //Przesuniecie dol
+						myDelay(100);
+						menu.przesunD();
+					}
+
+					if (menu_selected_flag == 0) {
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 0) { //Zmiana gamestate
+							std::cout << "Uruchamiam gre..." <<  std::endl;
+							menu_selected_flag = 1;
+							currentState = GameState::Playing;
+						}
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 1) {
+							std::cout << "Wczytuje gre..." << std::endl;
+
+							SaveState temp(game.getPaddle(), game.getBall(), game.getBricks()); //Wczytywanie gry, w tym celu wykorzystany jest tymczasowy savestate
+							if (temp.loadFromFile("zapis.txt")) {
+								temp.apply(game.getPaddle(), game.getBall(), game.getBricks());
+								std::cout << "Gra wczytana!" << std::endl;
+
+								menu_selected_flag = 1;
+								currentState = GameState::Playing;
+							}
+							else {
+								std::cout << "Brak zapisu. " << std::endl;
+							}
+						}
+
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 2) {
+							std::cout << "Najlepsze wyniki..." << std::endl;
+							menu_selected_flag = 1;
+							currentState = GameState::Scores;
+						}
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 3) {
+							std::cout << "Koniec gry..." << std::endl;
+							menu_selected_flag = 1;
+							window.close();
+						}
+					}
 				}
-				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
-					handleInput(keyReleased->code, false);
-				}
 			}
-	}
-
-	void handleInput(sf::Keyboard::Key key, bool isPressed) {  //Obs³uga nacisniêc przycisków
-		if (key == sf::Keyboard::Key::A) {
-			movingLeft = isPressed;
-		}
-		if (key == sf::Keyboard::Key::D) {
-			movingRight = isPressed;
-		}
-
-	}
-	
-	void generateBricks() { //Generacja wektora z cegielkami 
-		const int columns = 6;
-		const int rows = 7;
-		const float brick_size_y = 25.f;
-		const float brick_size_x = (640.f - (columns - 1) * 2.f) / columns;
-		float posY = brick_size_y / 2 + 50.f;
-
-		for (int i = 0; i < rows; i++ ) { //Ustawianie pozycji poszczegolnych cegielek
-			float posX = brick_size_x / 2;
-
-			for (int j = 0; j < columns; j++) {
-
-				int L = (i < 1) ? 3 : (i < 3) ? 2 : 1;
-				bricks.emplace_back(sf::Vector2f{posX , posY}, sf::Vector2f{brick_size_x, brick_size_y }, L);
-				posX = posX + brick_size_x + 2.f;
+			window.clear(); //Procedury rysujace menu
+			if (menu_selected_flag == 0) {
+				menu.draw(window);
 			}
-			posY = posY + brick_size_y + 2.f;
-
-		}
-
+			window.display();
+			break;
 
 
-	}
 
-	void update(float deltaTime) { //Funkcjonalnoœæ gry
-		
-		if (movingLeft == true) { //Ruch paletki w lewo i prawo
-			pal.move_left(deltaTime * 50 * pal.getVx() );
-		}
-		if (movingRight == true) {
-			pal.move_right(deltaTime * 50 * pal.getVx());
-		}
-		pal.clampToRound(640); //Blokada wychodzenia paletki poza ekran 
 
-		ball.move_ball(deltaTime * 50 * ball.getVx(), deltaTime * 50 * ball.getVy()); //Ruch pi³ki
 
-		ball.wallCollision(640, 480); //Kolizja paletki ze sciana
-		if (ball.collidePaddle(pal)) {
-			std::cout << "HIT PADDLE\n";
-		}
-		for (auto& brick : bricks) {
-			if (ball.collideBrick(brick) == true) {
-				brick.hit();
-				break;
+		case GameState::Playing: 
+			game.run(); //Uruchomienie gry
+			if (game.is_exiting() == true) { //Powrot do menu i zapis gry
+				SaveState saveState(game.getPaddle(), game.getBall(), game.getBricks());
+				saveState.saveToFile("zapis.txt");
+				std::cout << "Gra zapisana!" << "\n";
+				currentState = GameState::Menu;
 			}
+			break;
+
+		case GameState::Scores:
+			break;
 		}
 
 
-
-
-		if ((ball.getY() + ball.getR()) >= 480 ) { //Przegrana
-
-			//window.close();
-		}
 	}
-	void render() { //Renderowanie obiektów
-		window.setFramerateLimit(60);
-		window.clear(sf::Color(20,20,30));
-		pal.draw(window);
-		ball.draw(window);
-		for (auto& brick : bricks) {
-			brick.draw(window);
-		}
-		window.display();
-	}
-
-
-	sf::Clock clock; //Implementacja fixed-time steps
-	sf::Time timeSinceUpdate = sf::Time::Zero;
-	const sf::Time timePerFrame = sf::seconds(1.f / 60.f);
-	
-
-
-public: //Uruchomienie gry
-	Game();
-	void run() { 
-		generateBricks(); //Wywolanie funkcji generujacej cegielki 
-		while (window.isOpen()) {
-			processEvents(); //Przetwarzanie eventow jak nacisniecia przyciskow, oraz odswiezanie ekranu gry odbywa sie zawsze w rownych odstepach czasu
-			timeSinceUpdate = timeSinceUpdate + clock.restart();
-			while (timeSinceUpdate > timePerFrame) {
-				timeSinceUpdate = timeSinceUpdate - timePerFrame;
-				processEvents();
-				update(timePerFrame.asSeconds());
-			}
-			render();
-
-		}
-	}
-};
-Game::Game():window(sf::VideoMode({ 640, 480 }), //Konstruktor gry
-	"test"), pal(320.f, 440.f, 5.f, 100.f, 20.f),
-	ball(8.f, 320.f, 400.f, 4.f, -3.f),
-	movingLeft(false),
-	movingRight(false)
-{
-}
-
-
-int main() {
-	Game game;
-	game.run();
-
 
 }

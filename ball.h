@@ -88,6 +88,7 @@ public:
                 shape.setPosition({ x, y });
                 return true;
             }
+            return false;
         }
 
       
@@ -117,6 +118,14 @@ public:
     }
     float getVy(void) {
         return vy;
+    }
+
+
+    void reset(float xreset, float yreset, float vxreset, float vyreset) { //Setter 
+        x = xreset;
+        y = yreset;
+        vx = vxreset;
+        vy = vyreset;
     }
 
 
