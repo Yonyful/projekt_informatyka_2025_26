@@ -65,6 +65,7 @@ public:
 	void setPosition(float xreset, float yreset) { //Setter polozenia
 		x = xreset;
 		y = yreset;
+		shape.setPosition({ x,y });
 	}
 
 
@@ -77,7 +78,7 @@ paletka::paletka(float x_in, float y_in, float  vx_in, float pal_width_in, float
 	pal_height = pal_height_in;
 
 	
-	shape.setSize({ pal_width_in, pal_height_in }); //Parametry paletki w SFML
+	shape.setSize({ pal_width_in, pal_height_in });
 	shape.setOrigin({ pal_width_in / 2, pal_height_in / 2 });
 	shape.setPosition({ x_in, y_in });
 	shape.setFillColor(sf::Color::Red);

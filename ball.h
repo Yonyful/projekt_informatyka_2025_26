@@ -38,7 +38,7 @@ public:
             bounceX();
         }
 
-        if (y - r <= 0) { //Kolizja pionowa oraz ustawienie pozycji zeby pilka nie byla w scianie
+        if (y - r <= 0) { //Kolizja pionowa 
             bounceY();
         }
         else if (y + r >= height) {
@@ -47,7 +47,7 @@ public:
     }
 
 
-    bool collidePaddle(paletka& p) { //Kolizja paletka pilka 
+    bool collidePaddle(paletka& p) { //Kolizja pilki z paletka 
         float left = p.getX() - (p.getpal_width() / 2.f);
         float right = p.getX() + (p.getpal_width() / 2.f);
         float top = p.getY() - (p.getpal_height() / 2.f);
@@ -64,7 +64,7 @@ public:
 
     }
 
-    bool collideBrick(Brick& b) { //
+    bool collideBrick(Brick& b) { //Kolizja z brickiem
 
         float width = b.getSize().x; //Wymiary klocka
         float height = b.getSize().y;

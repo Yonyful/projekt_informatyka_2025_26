@@ -99,7 +99,8 @@ private:
 
 		if ((bl.getY() + bl.getR()) >= 480) { //Przegrana
 
-			//window.close();
+			std::cout << "Przegrana" << std::endl;
+			isExiting = true;
 		}
 	}
 	void render() { //Renderowanie obiektów
@@ -130,7 +131,7 @@ public: //Uruchomienie gry
 			delta = sf::seconds(0.1f);
 		}
 
-		timeSinceUpdate += delta;
+		timeSinceUpdate += delta; //Update gry tylko w rowno odleglych odstepach czasowych
 		while (timeSinceUpdate > timePerFrame) {
 			timeSinceUpdate -= timePerFrame;
 			processEvents();
@@ -138,6 +139,15 @@ public: //Uruchomienie gry
 		}
 		render();
 	}
+	void reset() { //Funkcja resetujaca do defaultowych pozycji
+		pal.setPosition(320, 440);
+		bl.reset(320, 400, 4, 3);
+		bricks.clear();
+		generateBricks();
+		timeSinceUpdate = sf::Time::Zero;
+		clock.restart();
+	}
+
 	bool is_exiting() { //Gettery
 		return isExiting;
 	}

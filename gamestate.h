@@ -107,10 +107,8 @@ public:
 
 	}
 
-
-
 }; 
-SaveState::SaveState(paletka& p,ball& b, std::vector<Brick>& bricks) { //Konstruktor
+SaveState::SaveState(paletka& p,ball& b, std::vector<Brick>& bricks) { //Konstruktor pobierajacy wszystkie aktualne pozycje obiektow gry
 	paddlePosition.x = p.getX();
 	paddlePosition.y = p.getY();
 	ballPosition.x = b.getX();

@@ -9,7 +9,7 @@
 
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode({ 640, 480 }), "Arkanoid");
+	sf::RenderWindow window(sf::VideoMode({ 640, 480 }), "Arkanoid"); //Wywolanie obiektow tworzacych gre 
 	enum class GameState {Menu, Playing, Scores};
 	GameState currentState = GameState::Menu;
 	int menu_selected_flag = 0;
@@ -26,20 +26,21 @@ int main() {
 				}
 
 				if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-					if (keyPressed->scancode == sf::Keyboard::Scancode::Up) { //Przesuniecie gora
+					if (keyPressed->scancode == sf::Keyboard::Scancode::Up) { //Przesuniecie menu gora
 						myDelay(100);
 						menu.przesunG();
 					}
-					if (keyPressed->scancode == sf::Keyboard::Scancode::Down) { //Przesuniecie dol
+					if (keyPressed->scancode == sf::Keyboard::Scancode::Down) { //Przesuniecie menu dol
 						myDelay(100);
 						menu.przesunD();
 					}
 
-					if (menu_selected_flag == 0) {
-						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 0) { //Zmiana gamestate
+					if (menu_selected_flag == 0) { 
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 0) { //Nowa gra + wywolanie resetu 
 							std::cout << "Uruchamiam gre..." <<  std::endl;
 							menu_selected_flag = 1;
 							currentState = GameState::Playing;
+							game.reset();
 						}
 						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 1) {
 							std::cout << "Wczytuje gre..." << std::endl;
@@ -52,17 +53,17 @@ int main() {
 								menu_selected_flag = 1;
 								currentState = GameState::Playing;
 							}
-							else {
+							else { //Blad w przypadku braku pliku, nie wyokna sie wtedy nic 
 								std::cout << "Brak zapisu. " << std::endl;
 							}
 						}
 
-						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 2) {
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 2) { //Najlepsze wyniki
 							std::cout << "Najlepsze wyniki..." << std::endl;
 							menu_selected_flag = 1;
 							currentState = GameState::Scores;
 						}
-						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 3) {
+						if (keyPressed->scancode == sf::Keyboard::Scancode::Enter && menu.getSelectedItem() == 3) { //Wyjscie z gry
 							std::cout << "Koniec gry..." << std::endl;
 							menu_selected_flag = 1;
 							window.close();
@@ -77,13 +78,9 @@ int main() {
 			window.display();
 			break;
 
-
-
-
-
 		case GameState::Playing: 
 			game.run(); //Uruchomienie gry
-			if (game.is_exiting() == true) { //Powrot do menu i zapis gry
+			if (game.is_exiting() == true) { //Powrot do menu i zapis gry do pliku
 				SaveState saveState(game.getPaddle(), game.getBall(), game.getBricks());
 				saveState.saveToFile("zapis.txt");
 				std::cout << "Gra zapisana!" << "\n";
